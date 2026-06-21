@@ -76,7 +76,8 @@ const Generator: React.FC<GeneratorProps> = ({ uploadedImage, selectedStyle, onC
         const token = sessionData?.session?.access_token;
         if (!token) throw new Error('Not authenticated. Please sign in and try again.');
 
-        const apiRes = await fetch('/api/generate-headshot', {
+        const supabaseUrl = (import.meta as any).env.VITE_SUPABASE_URL;
+        const apiRes = await fetch(`${supabaseUrl}/functions/v1/generate-headshot`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
           body: JSON.stringify({
@@ -86,8 +87,9 @@ const Generator: React.FC<GeneratorProps> = ({ uploadedImage, selectedStyle, onC
           }),
         });
         if (!apiRes.ok) {
-          const { error } = await apiRes.json().catch(() => ({ error: 'Generation failed' }));
-          throw new Error(error ?? 'Generation failed');
+          let errMsg = `Generation failed (HTTP ${apiRes.status})`;
+          try { const body = await apiRes.json(); errMsg = body.error || errMsg; } catch {}
+          throw new Error(errMsg);
         }
         const { image: generatedBase64 } = await apiRes.json();
         setStage("Finalizing your headshot...");
