@@ -1,0 +1,10 @@
+{
+  "name": "ProHeadshot AI",
+  "description": "Professional AI Headshot Generator",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProHeadshot AI - Professional Headshots Generator</title>
+    <script>
+      (function() {
+        var errs = [];
+        window.addEventListener('error', function(e) {
+          errs.push(e);
+          showError(e);
+        });
+        window.addEventListener('unhandledrejection', function(e) {
+          errs.push(e.reason);
+          showError(e.reason);
+        });
+        function showError(error) {
+          if (!error) return;
+          function inject() {
+            if (document.getElementById('tech-error-overlay')) return;
+            var div = document.createElement('div');
+            div.id = 'tech-error-overlay';
+            div.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:#020617;color:#f1f5f9;z-index:999999;padding:32px;font-family:monospace;overflow:auto;line-height:1.6;font-size:13px;box-sizing:border-box;';
+            var msg = error.message || error.toString() || 'Unknown Error';
+            var stack = '';
+            if (error.error && error.error.stack) stack = error.error.stack;
+            else if (error.stack) stack = error.stack;
+            
+            div.innerHTML = '<h2 style="color:#f87171;font-size:18px;margin-bottom:12px;font-weight:bold;">🚨 Client Bootup Exception Caught</h2>' +
+              '<p style="color:#94a3b8;margin-bottom:20px;">The application failed to render or compile in your browser view. Details:</p>' +
+              '<pre style="background:#0b0f19;border:1px solid #1e293b;padding:16px;border-radius:8px;overflow-x:auto;color:#cbd5e1;white-space:pre-wrap;word-break:break-all;">' +
+              'Message: ' + msg + '\n\n' + (stack ? 'Stack Trace:\n' + stack : 'No stack trace available.') +
+              '</pre>' +
+              '<button onclick="window.location.reload(true)" style="margin-top:16px;background:#2563eb;color:white;border:none;padding:8px 16px;border-radius:6px;font-weight:bold;cursor:pointer;">Reload App</button>';
+            document.body.appendChild(div);
+          }
+          if (document.body) inject();
+          else window.addEventListener('DOMContentLoaded', inject);
+        }
+      })();
+    </script>
+    <script>
+      (function() {
+        try {
+          if (window.name === 'supabase_oauth_popup' && window.opener && window.location.hash && window.location.hash.includes('access_token=')) {
+            window.opener.postMessage({
+              type: 'SUPABASE_OAUTH_HASH',
+              hash: window.location.hash
+            }, '*');
+            window.close();
+          }
+        } catch (e) {
+          console.error("OAuth interceptor popup failed:", e);
+        }
+      })();
+    </script>
+    <script src="https://aistudio.google.com/js/app_bridge.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>
