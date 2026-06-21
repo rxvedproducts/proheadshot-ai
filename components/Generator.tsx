@@ -1,8 +1,8 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { HeadshotStyle, User } from '../types';
-import { generateHeadshot } from '../services/geminiService';
-import { uploadImage, saveGeneratedImage, deductCredit, getPublicUrl } from '../services/supabaseService';
+import { compressImage } from '../services/geminiService';
+import { uploadImage, saveGeneratedImage, deductCredit, getPublicUrl, supabase } from '../services/supabaseService';
 import { Loader2, AlertCircle, RefreshCcw, Coins, Sparkles, Wand2 } from 'lucide-react';
 
 interface GeneratorProps {
@@ -66,13 +66,31 @@ const Generator: React.FC<GeneratorProps> = ({ uploadedImage, selectedStyle, onC
             }
         }, 150);
 
-        // 1. Generate Image directly via Gemini SDK
-        const generatedBase64 = await generateHeadshot(
-          uploadedImage, 
-          selectedStyle.promptModifier,
-          !!selectedStyle.isCostume,
-          (newStage) => setStage(newStage)
-        );
+        // 1. Compress image client-side, then generate via server-side API
+        setStage("Optimizing your photo...");
+        const rawBase64 = uploadedImage.includes(',') ? uploadedImage.split(',')[1] : uploadedImage;
+        const compressedBase64 = await compressImage(`data:image/jpeg;base64,${rawBase64}`);
+
+        setStage("AI is crafting your portrait...");
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        if (!token) throw new Error('Not authenticated. Please sign in and try again.');
+
+        const apiRes = await fetch('/api/generate-headshot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            image: compressedBase64,
+            style: selectedStyle.promptModifier,
+            isCostume: !!selectedStyle.isCostume,
+          }),
+        });
+        if (!apiRes.ok) {
+          const { error } = await apiRes.json().catch(() => ({ error: 'Generation failed' }));
+          throw new Error(error ?? 'Generation failed');
+        }
+        const { image: generatedBase64 } = await apiRes.json();
+        setStage("Finalizing your headshot...");
         
         clearInterval(progressInterval);
         setProgress(90);
