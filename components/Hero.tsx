@@ -161,7 +161,7 @@ const Hero: React.FC<HeroProps> = ({ onStart, onViewSamples }) => {
                     />
                     {/* After label */}
                     <div className="absolute top-3 left-3 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">
-                      AI Headshot ✓
+                      {pair.style}
                     </div>
                   </div>
 

@@ -76,8 +76,8 @@ const TransformationCard: React.FC<{
         />
 
         {/* Before label */}
-        <div className="absolute top-3 left-3 z-10 bg-black/40 backdrop-blur-sm text-white/90 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-          Before
+        <div className="absolute top-3 left-3 z-10 bg-black/40 backdrop-blur-sm text-white/90 text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+          Before Selfie
         </div>
 
         {/* After reveal */}
@@ -92,8 +92,8 @@ const TransformationCard: React.FC<{
             referrerPolicy="no-referrer"
           />
           {/* After label */}
-          <div className="absolute top-3 left-3 bg-amber-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
-            After ✓
+          <div className="absolute top-3 left-3 bg-amber-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+            {style}
           </div>
         </div>
 
