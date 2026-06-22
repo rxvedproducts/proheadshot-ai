@@ -48,7 +48,7 @@ const HowItWorks: React.FC<HowItWorksProps> = ({ onStart }) => {
             </div>
             <h3 className="text-xl font-semibold text-white mb-3">3. Get Results</h3>
             <p className="text-slate-400 leading-relaxed">
-                Our photography engine reconstructs your photo into a 8K professional headshot in ~60 seconds.
+                Our photography engine reconstructs your photo into a studio-quality professional headshot in ~60 seconds.
             </p>
         </div>
 

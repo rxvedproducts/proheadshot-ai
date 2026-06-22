@@ -20,7 +20,7 @@ import RedirectHandler from './components/RedirectHandler';
 import { AppStep, HeadshotStyle, User } from './types';
 import { supabase, ensureUserProfileExists, getUserProfile, testSupabaseConnection } from './services/supabaseService';
 import { SUPPORT_EMAIL } from './constants';
-import { Loader2, CheckCircle2, AlertTriangle, Terminal, X, Copy, Check, Wrench } from 'lucide-react';
+import { Loader2, CheckCircle2, AlertTriangle, Terminal, X, Copy, Check, Wrench, Sparkles, ArrowRight } from 'lucide-react';
 
 // Module-scoped log buffer — not exposed on window, inaccessible to third-party scripts
 const _systemLogs: string[] = [];
@@ -578,7 +578,53 @@ const App: React.FC = () => {
         {step === 'landing' && (
           <>
             <Hero onStart={handleStart} onViewSamples={handleViewSamples} />
-            <Samples />
+            <HowItWorks onStart={handleStart} />
+            <Samples onStart={handleStart} />
+            {/* Indian Styles callout */}
+            <div className="py-16 px-4 bg-gradient-to-b from-slate-950 to-slate-900 border-t border-slate-900">
+              <div className="container mx-auto max-w-5xl">
+                <div className="bg-gradient-to-br from-orange-950/30 to-purple-950/30 border border-orange-800/30 rounded-3xl p-10 md:p-14 text-center">
+                  <div className="text-4xl mb-4">🇮🇳</div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                    Exclusive Indian Cultural Styles
+                  </h2>
+                  <p className="text-slate-300 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+                    The only AI headshot service celebrating South Asian heritage — with 22 regional Indian costumes (Rajasthani, Bengali, Kannadiga and more), 16 traditional Indian art forms (Madhubani, Warli, Tanjore...), and 13 unique creative styles.
+                  </p>
+                  <div className="flex flex-wrap justify-center gap-2 mb-8">
+                    {['Rajasthani Costume','Bengali Traditional','Kannadiga Silk','Madhubani Art','Warli Style','Tanjore Gold','Mughal Portrait','South Indian Silk','Punjabi Phulkari'].map(tag => (
+                      <span key={tag} className="px-3 py-1.5 bg-orange-950/50 text-orange-300 text-xs font-semibold rounded-full border border-orange-800/40">
+                        {tag}
+                      </span>
+                    ))}
+                    <span className="px-3 py-1.5 bg-purple-950/50 text-purple-300 text-xs font-semibold rounded-full border border-purple-800/40">+42 more</span>
+                  </div>
+                  <button
+                    onClick={handleStart}
+                    className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-500 text-white font-bold px-8 py-4 rounded-xl transition-all hover:scale-105 shadow-lg shadow-orange-900/30 group"
+                  >
+                    Explore Indian Styles
+                    <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+              </div>
+            </div>
+            <Pricing onSelectPlan={handleSelectPricingPlan} onContactEnterpriseSales={() => setIsEnterpriseSalesModalOpen(true)} />
+            {/* Final CTA before footer */}
+            <div className="py-16 px-4 bg-slate-950 border-t border-slate-900">
+              <div className="container mx-auto max-w-3xl text-center">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Look the Part?</h2>
+                <p className="text-slate-400 text-lg mb-8">Start with a $2.99 plan — no subscription, no studio appointment needed.</p>
+                <button
+                  onClick={handleStart}
+                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-10 py-4 rounded-xl transition-all hover:scale-105 shadow-lg shadow-blue-900/30 group text-lg"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Get Your Headshot — $2.99
+                  <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+                </button>
+              </div>
+            </div>
           </>
         )}
 
@@ -635,7 +681,7 @@ const App: React.FC = () => {
             <div className="col-span-1 md:col-span-2 space-y-4">
               <div className="flex items-center gap-2">
                 <div className="rounded-lg bg-blue-600 p-2">
-                  <CheckCircle2 className="h-5 w-5 text-white" />
+                  <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-bold text-white">ProHeadshot<span className="text-blue-500">AI</span></span>
               </div>
@@ -670,8 +716,8 @@ const App: React.FC = () => {
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} onLoginSuccess={handleLoginSuccess} />
       <EnterpriseSalesModal isOpen={isEnterpriseSalesModalOpen} onClose={() => setIsEnterpriseSalesModalOpen(false)} />
 
-      {/* FLOATING DIAGNOSTICS & TROUBLESHOOTING PANEL */}
-      <div className="fixed bottom-4 right-4 z-50">
+      {/* FLOATING DIAGNOSTICS & TROUBLESHOOTING PANEL — dev only */}
+      {(import.meta as any).env.DEV && <div className="fixed bottom-4 right-4 z-50">
         {!isDiagnosticsOpen ? (
           <button
             onClick={() => setIsDiagnosticsOpen(true)}
@@ -761,7 +807,7 @@ const App: React.FC = () => {
             </div>
           </div>
         )}
-      </div>
+      </div>}
     </div>
   );
 };

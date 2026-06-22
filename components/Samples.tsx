@@ -1,82 +1,102 @@
-
 import React from 'react';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
-const SAMPLE_PAIRS = [
+const STYLES_SHOWCASE = [
   {
-    id: 1,
-    before: "https://images.unsplash.com/photo-1599566150163-29194dcaad36?q=80&w=600&auto=format&fit=crop", // Casual male
-    after: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=600&auto=format&fit=crop", // Professional male
-    label: "Corporate Executive"
+    label: 'Corporate Studio',
+    img: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400&h=500&fit=crop&auto=format',
+    color: 'from-blue-600/20 to-blue-900/20',
   },
   {
-    id: 2,
-    before: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=600&auto=format&fit=crop", // Casual female
-    after: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop", // Professional female
-    label: "Tech Leader"
-  }
+    label: 'Startup Founder',
+    img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=500&fit=crop&auto=format',
+    color: 'from-purple-600/20 to-purple-900/20',
+  },
+  {
+    label: 'Creative Professional',
+    img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=500&fit=crop&auto=format',
+    color: 'from-green-600/20 to-green-900/20',
+  },
+  {
+    label: 'Executive Luxury',
+    img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=500&fit=crop&auto=format',
+    color: 'from-amber-600/20 to-amber-900/20',
+  },
 ];
 
-const Samples: React.FC = () => {
+interface SamplesProps {
+  onStart?: () => void;
+}
+
+const Samples: React.FC<SamplesProps> = ({ onStart }) => {
   return (
     <div id="samples-section" className="py-20 px-4 bg-slate-950 border-t border-slate-900">
       <div className="container mx-auto max-w-6xl">
-        <div className="text-center mb-16">
+
+        {/* Header */}
+        <div className="text-center mb-14">
+          <p className="text-blue-400 text-sm font-semibold uppercase tracking-widest mb-3">Style Gallery</p>
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            Stunning Results, Every Time
+            50+ Styles for Every Professional
           </h2>
           <p className="text-slate-400 max-w-2xl mx-auto text-lg">
-            See how our AI transforms everyday selfies into studio-grade professional headshots while preserving your unique identity.
+            From corporate boardrooms to creative studios — and unique Indian cultural styles found nowhere else.
           </p>
         </div>
 
-        <div className="grid gap-12 md:gap-16">
-          {SAMPLE_PAIRS.map((pair, index) => (
-            <div 
-              key={pair.id} 
-              className={`flex flex-col md:flex-row items-center gap-8 ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+        {/* Style grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
+          {STYLES_SHOWCASE.map(style => (
+            <div
+              key={style.label}
+              className={`relative rounded-2xl overflow-hidden aspect-[3/4] border border-slate-800 group cursor-pointer bg-gradient-to-b ${style.color}`}
             >
-              {/* Images Container */}
-              <div className="flex-1 flex flex-col sm:flex-row items-center gap-4 w-full max-w-2xl">
-                {/* Before */}
-                <div className="relative flex-1 w-full aspect-[3/4] rounded-2xl overflow-hidden border border-slate-800 shadow-lg group">
-                   <div className="absolute top-4 left-4 bg-black/60 backdrop-blur-md text-xs font-bold text-white px-3 py-1 rounded-full z-10">
-                     ORIGINAL
-                   </div>
-                   <img src={pair.before} alt="Original Selfie" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" referrerPolicy="no-referrer" />
-                </div>
-
-                {/* Arrow Icon for mobile/desktop */}
-                <div className="flex-shrink-0 text-slate-600">
-                  <ArrowRight className="w-6 h-6 rotate-90 sm:rotate-0" />
-                </div>
-
-                {/* After */}
-                <div className="relative flex-1 w-full aspect-[3/4] rounded-2xl overflow-hidden border-2 border-blue-500/50 shadow-[0_0_30px_rgba(59,130,246,0.15)] group">
-                   <div className="absolute top-4 left-4 bg-blue-600 text-xs font-bold text-white px-3 py-1 rounded-full z-10 flex items-center gap-1">
-                     <Check className="w-3 h-3" /> GENERATED
-                   </div>
-                   <img src={pair.after} alt="Generated Headshot" className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700" referrerPolicy="no-referrer" />
-                </div>
-              </div>
-
-              {/* Text Content */}
-              <div className="flex-1 text-center md:text-left space-y-4">
-                <div className="inline-block px-3 py-1 rounded-full bg-slate-900 text-blue-400 text-sm font-medium mb-2">
-                  {pair.label}
-                </div>
-                <h3 className="text-2xl font-bold text-white">
-                  {index === 0 && "Perfect Lighting & Composition"}
-                  {index === 1 && "Professional Attire, Automatically"}
-                </h3>
-                <p className="text-slate-400 leading-relaxed">
-                  {index === 0 && "Our AI corrects lighting imbalances and shadows, giving you that crisp, soft-box studio look without the expensive equipment."}
-                  {index === 1 && "Upload a photo in a t-shirt, get a photo in a tailored blazer. We handle the wardrobe styling so you look the part."}
-                </p>
+              <img
+                src={style.img}
+                alt={style.label}
+                className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
+                referrerPolicy="no-referrer"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-3">
+                <span className="text-white text-xs font-semibold">{style.label}</span>
               </div>
             </div>
           ))}
         </div>
+
+        {/* What makes it different */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
+            <div className="w-10 h-10 bg-blue-900/50 rounded-xl flex items-center justify-center mb-4">
+              <Sparkles className="w-5 h-5 text-blue-400" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-3">Professional Attire, Automatically</h3>
+            <p className="text-slate-400 leading-relaxed">
+              Upload a photo in a t-shirt — get a photo in a tailored blazer or business suit. Our AI handles wardrobe styling so you always look the part.
+            </p>
+          </div>
+          <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8">
+            <div className="w-10 h-10 bg-purple-900/50 rounded-xl flex items-center justify-center mb-4">
+              <span className="text-xl">🇮🇳</span>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-3">Exclusive Indian Styles</h3>
+            <p className="text-slate-400 leading-relaxed">
+              The only AI headshot service with 22 regional Indian costume styles, 16 Indian art forms, and 13 creative cultural styles. Celebrate your heritage professionally.
+            </p>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div className="text-center">
+          <div className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-8 py-4 rounded-xl transition-all hover:scale-105 cursor-pointer shadow-lg shadow-blue-900/30 group"
+            onClick={onStart}
+          >
+            <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
+            Browse All 50+ Styles
+          </div>
+        </div>
+
       </div>
     </div>
   );
