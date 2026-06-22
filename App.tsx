@@ -662,7 +662,7 @@ const App: React.FC = () => {
           </div>
           <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-500 text-xs">
             <p>&copy; {new Date().getFullYear()} ProHeadshot AI. All rights reserved.</p>
-            <p>Made with ❤️ in Philadelphia</p>
+            <p>Made with ❤️ in California</p>
           </div>
         </div>
       </footer>
