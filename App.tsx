@@ -498,12 +498,12 @@ const App: React.FC = () => {
 
   if (oauthError) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400 gap-4 px-4">
+      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center text-stone-500 gap-4 px-4">
         <AlertTriangle className="w-10 h-10 text-red-500" />
-        <p className="text-red-400 font-semibold text-center">Sign-in failed: {oauthError}</p>
+        <p className="text-red-600 font-semibold text-center">Sign-in failed: {oauthError}</p>
         <button
           onClick={() => { setOauthError(null); window.history.replaceState(null, '', window.location.pathname); }}
-          className="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg font-bold transition-colors"
+          className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg font-bold transition-colors"
         >
           Try Again
         </button>
@@ -523,8 +523,8 @@ const App: React.FC = () => {
     }
     // PKCE flow (?code=): detectSessionInUrl handles it automatically; show spinner
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400">
-        <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center text-stone-500">
+        <Loader2 className="w-10 h-10 text-amber-600 animate-spin mb-4" />
         <p className="animate-pulse">Completing sign-in...</p>
       </div>
     );
@@ -532,27 +532,27 @@ const App: React.FC = () => {
 
   if (isInitializing) {
     return (
-      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center text-slate-400">
-        <Loader2 className="w-10 h-10 text-blue-600 animate-spin mb-4" />
+      <div className="min-h-screen bg-stone-50 flex flex-col items-center justify-center text-stone-500">
+        <Loader2 className="w-10 h-10 text-amber-600 animate-spin mb-4" />
         <p className="animate-pulse">Authenticating...</p>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-50 selection:bg-blue-500/30 pb-12">
+    <div className="min-h-screen bg-stone-50 text-stone-900 selection:bg-amber-200/60 pb-12">
       <CookieBanner />
       {dbStatus.checked && !dbStatus.success && (
-        <div className="bg-amber-950/90 border-b border-amber-500/40 px-4 py-3 text-amber-200 flex flex-col md:flex-row items-center justify-center gap-4 text-sm z-50 relative animate-in fade-in slide-in-from-top-4 duration-300">
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-3 text-amber-800 flex flex-col md:flex-row items-center justify-center gap-4 text-sm z-50 relative animate-in fade-in slide-in-from-top-4 duration-300">
           <div className="flex items-center gap-2 text-left animate-pulse">
-            <AlertTriangle className="w-5 h-5 text-amber-505 flex-shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0" />
             <span className="leading-relaxed">
               <strong>Database Connection Alert:</strong> {dbStatus.isPaused ? "Your Supabase database instance is currently paused or offline." : dbStatus.message || "Unable to connect to Supabase backend."}
             </span>
           </div>
-          <button 
+          <button
             onClick={enableDemoMode}
-            className="flex-shrink-0 px-4 py-1.5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 active:scale-95 text-white font-bold rounded-lg text-xs transition-all shadow-md shadow-amber-900/40 cursor-pointer border border-amber-500/30"
+            className="flex-shrink-0 px-4 py-1.5 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-lg text-xs transition-all shadow-sm cursor-pointer"
           >
             Launch Client-Side Demo Mode
           </button>
@@ -581,27 +581,27 @@ const App: React.FC = () => {
             <HowItWorks onStart={handleStart} />
             <Samples onStart={handleStart} />
             {/* Indian Styles callout */}
-            <div className="py-16 px-4 bg-gradient-to-b from-slate-950 to-slate-900 border-t border-slate-900">
+            <div className="py-16 px-4 bg-stone-900 border-t border-stone-800">
               <div className="container mx-auto max-w-5xl">
-                <div className="bg-gradient-to-br from-orange-950/30 to-purple-950/30 border border-orange-800/30 rounded-3xl p-10 md:p-14 text-center">
+                <div className="bg-gradient-to-br from-orange-900/40 to-amber-900/30 border border-orange-700/40 rounded-3xl p-10 md:p-14 text-center">
                   <div className="text-4xl mb-4">🇮🇳</div>
                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
                     Exclusive Indian Cultural Styles
                   </h2>
-                  <p className="text-slate-300 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
+                  <p className="text-stone-300 text-lg max-w-2xl mx-auto mb-8 leading-relaxed">
                     The only AI headshot service celebrating South Asian heritage — with 22 regional Indian costumes (Rajasthani, Bengali, Kannadiga and more), 16 traditional Indian art forms (Madhubani, Warli, Tanjore...), and 13 unique creative styles.
                   </p>
                   <div className="flex flex-wrap justify-center gap-2 mb-8">
                     {['Rajasthani Costume','Bengali Traditional','Kannadiga Silk','Madhubani Art','Warli Style','Tanjore Gold','Mughal Portrait','South Indian Silk','Punjabi Phulkari'].map(tag => (
-                      <span key={tag} className="px-3 py-1.5 bg-orange-950/50 text-orange-300 text-xs font-semibold rounded-full border border-orange-800/40">
+                      <span key={tag} className="px-3 py-1.5 bg-orange-900/50 text-orange-300 text-xs font-semibold rounded-full border border-orange-700/50">
                         {tag}
                       </span>
                     ))}
-                    <span className="px-3 py-1.5 bg-purple-950/50 text-purple-300 text-xs font-semibold rounded-full border border-purple-800/40">+42 more</span>
+                    <span className="px-3 py-1.5 bg-amber-900/50 text-amber-300 text-xs font-semibold rounded-full border border-amber-700/50">+42 more</span>
                   </div>
                   <button
                     onClick={handleStart}
-                    className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-500 text-white font-bold px-8 py-4 rounded-xl transition-all hover:scale-105 shadow-lg shadow-orange-900/30 group"
+                    className="inline-flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white font-bold px-8 py-4 rounded-xl transition-all hover:scale-105 shadow-lg shadow-orange-900/30 group"
                   >
                     Explore Indian Styles
                     <ArrowRight className="w-5 h-5 transition-transform group-hover:translate-x-1" />
@@ -611,13 +611,13 @@ const App: React.FC = () => {
             </div>
             <Pricing onSelectPlan={handleSelectPricingPlan} onContactEnterpriseSales={() => setIsEnterpriseSalesModalOpen(true)} />
             {/* Final CTA before footer */}
-            <div className="py-16 px-4 bg-slate-950 border-t border-slate-900">
+            <div className="py-16 px-4 bg-amber-50 border-t border-amber-100">
               <div className="container mx-auto max-w-3xl text-center">
-                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Ready to Look the Part?</h2>
-                <p className="text-slate-400 text-lg mb-8">Start with a $2.99 plan — no subscription, no studio appointment needed.</p>
+                <h2 className="text-3xl md:text-4xl font-bold text-stone-900 mb-4">Ready to Look the Part?</h2>
+                <p className="text-stone-500 text-lg mb-8">Start with a $2.99 plan — no subscription, no studio appointment needed.</p>
                 <button
                   onClick={handleStart}
-                  className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white font-bold px-10 py-4 rounded-xl transition-all hover:scale-105 shadow-lg shadow-blue-900/30 group text-lg"
+                  className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold px-10 py-4 rounded-xl transition-all hover:scale-105 shadow-md shadow-amber-100 group text-lg"
                 >
                   <Sparkles className="w-5 h-5" />
                   Get Your Headshot — $2.99
@@ -636,16 +636,16 @@ const App: React.FC = () => {
 
         {step === 'dashboard' && (
           user ? (
-            <Dashboard 
-              user={user} 
+            <Dashboard
+              user={user}
               onStartNew={() => { setUploadedImage(null); setSelectedStyle(null); setResultImage(null); setStep('upload'); }}
               onLogout={handleLogout}
-              onBuyCredits={() => handleNavigate('pricing')} 
+              onBuyCredits={() => handleNavigate('pricing')}
             />
           ) : (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
-                <p className="text-slate-500 animate-pulse text-sm">Loading your dashboard...</p>
+                <Loader2 className="w-12 h-12 animate-spin text-amber-600" />
+                <p className="text-stone-400 animate-pulse text-sm">Loading your dashboard...</p>
             </div>
           )
         )}
@@ -654,7 +654,7 @@ const App: React.FC = () => {
 
         {step === 'style' && (
           <div className="animate-in fade-in duration-500">
-             <button onClick={() => setStep('upload')} className="ml-4 mt-4 text-slate-400 hover:text-white text-sm mb-4">
+             <button onClick={() => setStep('upload')} className="ml-4 mt-4 text-stone-500 hover:text-stone-900 text-sm mb-4">
                 &larr; Back to Upload
              </button>
              <StyleSelector onSelect={handleStyleSelected} selectedStyle={selectedStyle} />
@@ -675,38 +675,38 @@ const App: React.FC = () => {
         {step === 'gallery' && resultImage && <Gallery imageUrl={resultImage} onRestart={handleRestart} />}
       </main>
 
-      <footer className="border-t border-slate-800 py-16 bg-slate-950/50">
+      <footer className="border-t border-stone-800 py-16 bg-stone-900">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
             <div className="col-span-1 md:col-span-2 space-y-4">
               <div className="flex items-center gap-2">
-                <div className="rounded-lg bg-blue-600 p-2">
+                <div className="rounded-lg bg-amber-600 p-2">
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">ProHeadshot<span className="text-blue-500">AI</span></span>
+                <span className="text-xl font-bold text-white">ProHeadshot<span className="text-amber-500">AI</span></span>
               </div>
-              <p className="text-slate-400 max-w-sm leading-relaxed text-sm">
+              <p className="text-stone-400 max-w-sm leading-relaxed text-sm">
                 Transforming professional identity with the power of generative AI. Our mission is to make premium business photography accessible to everyone.
               </p>
             </div>
             <div>
               <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Product</h4>
               <ul className="space-y-4 text-sm">
-                <li><button onClick={() => handleNavigate('pricing')} className="text-slate-500 hover:text-blue-400 transition-colors">Pricing</button></li>
-                <li><button onClick={() => handleNavigate('how-it-works')} className="text-slate-500 hover:text-blue-400 transition-colors">How it works</button></li>
-                {SUPPORT_EMAIL && <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-slate-500 hover:text-blue-400 transition-colors">Support</a></li>}
+                <li><button onClick={() => handleNavigate('pricing')} className="text-stone-500 hover:text-amber-400 transition-colors">Pricing</button></li>
+                <li><button onClick={() => handleNavigate('how-it-works')} className="text-stone-500 hover:text-amber-400 transition-colors">How it works</button></li>
+                {SUPPORT_EMAIL && <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-stone-500 hover:text-amber-400 transition-colors">Support</a></li>}
               </ul>
             </div>
             <div>
               <h4 className="text-white font-bold mb-6 text-sm uppercase tracking-wider">Legal</h4>
               <ul className="space-y-4 text-sm">
-                <li><button onClick={() => handleNavigate('terms')} className="text-slate-500 hover:text-blue-400 transition-colors">Terms of Service</button></li>
-                <li><button onClick={() => handleNavigate('privacy')} className="text-slate-500 hover:text-blue-400 transition-colors">Privacy Policy</button></li>
-                <li><button onClick={() => handleNavigate('refund-policy')} className="text-slate-500 hover:text-blue-400 transition-colors">Refund Policy</button></li>
+                <li><button onClick={() => handleNavigate('terms')} className="text-stone-500 hover:text-amber-400 transition-colors">Terms of Service</button></li>
+                <li><button onClick={() => handleNavigate('privacy')} className="text-stone-500 hover:text-amber-400 transition-colors">Privacy Policy</button></li>
+                <li><button onClick={() => handleNavigate('refund-policy')} className="text-stone-500 hover:text-amber-400 transition-colors">Refund Policy</button></li>
               </ul>
             </div>
           </div>
-          <div className="pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-500 text-xs">
+          <div className="pt-8 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between gap-4 text-stone-500 text-xs">
             <p>&copy; {new Date().getFullYear()} ProHeadshot AI. All rights reserved.</p>
             <p>Made with ❤️ in California</p>
           </div>
