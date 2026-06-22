@@ -132,7 +132,6 @@ const App: React.FC = () => {
 
   // Global console and error interceptors feeding a safe global log array to prevent infinite rendering loops
   useEffect(() => {
-    _systemLogs = _systemLogs || [];
     _systemLogs.push(`[System] Application loading... URL: ${window.location.origin}`);
     
     const handleGlobalError = (event: ErrorEvent) => {
