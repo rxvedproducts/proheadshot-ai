@@ -36,10 +36,11 @@ const EnterpriseSalesModal: React.FC<EnterpriseSalesModalProps> = ({ isOpen, onC
         throw new Error("Google Apps Script Web App URL is not configured. Please set VITE_APPS_SCRIPT_URL in your .env file.");
       }
 
-      const queryParams = new URLSearchParams(formData).toString();
-      const response = await fetch(`${APPS_SCRIPT_WEB_APP_URL}?${queryParams}`, {
+      const response = await fetch(APPS_SCRIPT_WEB_APP_URL, {
         method: 'POST',
-        mode: 'no-cors', // Important for Apps Script web apps
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(formData).toString(),
       });
       
       // Since 'no-cors' prevents reading response, assume success.

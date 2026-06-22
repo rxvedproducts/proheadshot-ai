@@ -22,6 +22,9 @@ import { supabase, ensureUserProfileExists, getUserProfile, testSupabaseConnecti
 import { SUPPORT_EMAIL } from './constants';
 import { Loader2, CheckCircle2, AlertTriangle, Terminal, X, Copy, Check, Wrench } from 'lucide-react';
 
+// Module-scoped log buffer — not exposed on window, inaccessible to third-party scripts
+const _systemLogs: string[] = [];
+
 const getHashParams = () => {
   const hash = window.location.hash;
   if (!hash) return {};
@@ -129,16 +132,16 @@ const App: React.FC = () => {
 
   // Global console and error interceptors feeding a safe global log array to prevent infinite rendering loops
   useEffect(() => {
-    (window as any).__system_logs = (window as any).__system_logs || [];
-    (window as any).__system_logs.push(`[System] Application loading... URL: ${window.location.origin}`);
+    _systemLogs = _systemLogs || [];
+    _systemLogs.push(`[System] Application loading... URL: ${window.location.origin}`);
     
     const handleGlobalError = (event: ErrorEvent) => {
       const msg = `[Error] ${event.message || event.error?.message || 'Uncaught Script Error'}`;
-      (window as any).__system_logs.push(msg);
+      _systemLogs.push(msg);
     };
     const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
       const msg = `[Promise Rejection] ${event.reason?.message || event.reason || 'Unhandled Promise Rejection'}`;
-      (window as any).__system_logs.push(msg);
+      _systemLogs.push(msg);
     };
 
     window.addEventListener('error', handleGlobalError);
@@ -152,22 +155,22 @@ const App: React.FC = () => {
     console.error = (...args: any[]) => {
       originalConsoleError.apply(console, args);
       const msg = safeFormat(args);
-      (window as any).__system_logs.push(`[Console Error] ${msg}`);
-      if ((window as any).__system_logs.length > 150) (window as any).__system_logs.shift();
+      _systemLogs.push(`[Console Error] ${msg}`);
+      if (_systemLogs.length > 150) _systemLogs.shift();
     };
 
     console.warn = (...args: any[]) => {
       originalConsoleWarn.apply(console, args);
       const msg = safeFormat(args);
-      (window as any).__system_logs.push(`[Console Warn] ${msg}`);
-      if ((window as any).__system_logs.length > 150) (window as any).__system_logs.shift();
+      _systemLogs.push(`[Console Warn] ${msg}`);
+      if (_systemLogs.length > 150) _systemLogs.shift();
     };
 
     console.log = (...args: any[]) => {
       originalConsoleLog.apply(console, args);
       const msg = safeFormat(args);
-      (window as any).__system_logs.push(`[Console Log] ${msg}`);
-      if ((window as any).__system_logs.length > 150) (window as any).__system_logs.shift();
+      _systemLogs.push(`[Console Log] ${msg}`);
+      if (_systemLogs.length > 150) _systemLogs.shift();
     };
 
     return () => {
@@ -182,7 +185,7 @@ const App: React.FC = () => {
   // Poll global logs array instead of real-time state trigger to completely decouple log generation and render cycles
   useEffect(() => {
     const updateLogs = () => {
-      const logs = (window as any).__system_logs || [];
+      const logs = _systemLogs || [];
       setDebugLogs([...logs]);
     };
     updateLogs();
@@ -207,8 +210,8 @@ const App: React.FC = () => {
       message: 'Demo mode active using mocked data.',
       isPaused: false
     });
-    if ((window as any).__system_logs) {
-      (window as any).__system_logs.push("[System] Bypassed database. Launched Client-Side Demo Mode successfully with 10 credits!");
+    if (_systemLogs) {
+      _systemLogs.push("[System] Bypassed database. Launched Client-Side Demo Mode successfully with 10 credits!");
     }
   };
 
@@ -298,7 +301,7 @@ const App: React.FC = () => {
 
     const handleAuthEvent = async (event: string, session: any) => {
       if (!mounted) return;
-      console.log(`Supabase Auth Event: ${event}`, session?.user?.email);
+      console.log(`Supabase Auth Event: ${event}`);
 
       try {
         if (session?.user) {
@@ -359,17 +362,19 @@ const App: React.FC = () => {
       }
     };
 
-    // Listening for token hash messages from Google OAuth popup window
+    // Listening for token hash messages from Google OAuth popup (local dev only)
+    const ALLOWED_MESSAGE_ORIGINS = new Set([
+      'http://localhost:3000',
+      'http://localhost:5173',
+      'http://127.0.0.1:3000',
+      'http://127.0.0.1:5173',
+    ]);
     const handleMessage = (event: MessageEvent) => {
       if (!mounted) return;
-      const origin = event.origin;
-      // Allow only same host or preview run.app subdomains / localports
-      if (!origin.endsWith('.run.app') && !origin.includes('localhost') && !origin.includes('127.0.0.1')) {
-        return;
-      }
+      if (!ALLOWED_MESSAGE_ORIGINS.has(event.origin)) return;
 
       if (event.data?.type === 'SUPABASE_OAUTH_HASH' && event.data?.hash) {
-        console.log("App: Clean hash received from popup window!", event.data.hash);
+        console.log("App: Clean hash received from popup window");
         setIsRedirectProcessing(true);
         setIsInitializing(true);
         try {

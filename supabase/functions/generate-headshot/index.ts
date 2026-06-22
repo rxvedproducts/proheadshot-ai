@@ -39,7 +39,41 @@ Deno.serve(async (req: Request) => {
         });
     }
 
-    // 2. Parse Input
+    // 2. Atomic server-side credit check and deduction (before generation)
+    const adminClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+    );
+
+    const { data: profile, error: profileError } = await adminClient
+      .from('profiles')
+      .select('credits')
+      .eq('id', user.id)
+      .single();
+
+    if (profileError || !profile || profile.credits < 1) {
+      return new Response(JSON.stringify({ error: 'Insufficient credits. Please purchase more to continue.' }), {
+        status: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // Optimistic lock: only succeeds if credits haven't changed since we read
+    const { data: updated } = await adminClient
+      .from('profiles')
+      .update({ credits: profile.credits - 1 })
+      .eq('id', user.id)
+      .eq('credits', profile.credits)
+      .select('id');
+
+    if (!updated || updated.length === 0) {
+      return new Response(JSON.stringify({ error: 'Insufficient credits. Please purchase more to continue.' }), {
+        status: 402,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 3. Parse Input
     const { image, style, isCostume } = await req.json();
     if (!image || !style) {
         return new Response(JSON.stringify({ error: 'Missing image or style' }), {

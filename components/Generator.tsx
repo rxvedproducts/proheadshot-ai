@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { HeadshotStyle, User } from '../types';
 import { compressImage } from '../services/geminiService';
-import { uploadImage, saveGeneratedImage, deductCredit, getPublicUrl, supabase } from '../services/supabaseService';
+import { uploadImage, saveGeneratedImage, getPublicUrl, supabase } from '../services/supabaseService';
 import { Loader2, AlertCircle, RefreshCcw, Coins, Sparkles, Wand2 } from 'lucide-react';
 
 interface GeneratorProps {
@@ -111,8 +111,7 @@ const Generator: React.FC<GeneratorProps> = ({ uploadedImage, selectedStyle, onC
               setProgress(96);
               
               await saveGeneratedImage(user.id, originalPath, generatedPath, selectedStyle.id);
-              await deductCredit(user.id, user.credits);
-              
+              // Credit deduction is handled server-side in the Edge Function before generation
               const publicUrl = getPublicUrl(generatedPath);
               setProgress(100);
               setTimeout(() => onComplete(publicUrl), 500);
