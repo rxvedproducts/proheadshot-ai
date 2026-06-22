@@ -75,7 +75,7 @@ const TransformationCard: React.FC<{
           referrerPolicy="no-referrer"
         />
 
-        {/* Before label */}
+        {/* Before label — top left */}
         <div className="absolute top-3 left-3 z-10 bg-black/40 backdrop-blur-sm text-white/90 text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
           Before Selfie
         </div>
@@ -91,8 +91,8 @@ const TransformationCard: React.FC<{
             className="w-full h-full object-cover object-top"
             referrerPolicy="no-referrer"
           />
-          {/* After label */}
-          <div className="absolute top-3 left-3 bg-amber-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+          {/* After label — top right so it never overlaps Before Selfie */}
+          <div className="absolute top-3 right-3 bg-amber-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
             {style}
           </div>
         </div>
