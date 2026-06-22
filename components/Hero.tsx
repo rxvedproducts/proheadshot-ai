@@ -143,11 +143,6 @@ const Hero: React.FC<HeroProps> = ({ onStart, onViewSamples }) => {
                     referrerPolicy="no-referrer"
                   />
 
-                  {/* "Before" label — top left */}
-                  <div className="absolute top-3 left-3 z-10 bg-black/50 backdrop-blur-sm text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">
-                    Before Selfie
-                  </div>
-
                   {/* After — animates in via clip-path */}
                   <div
                     className="absolute inset-0 transition-all ease-in-out duration-[900ms]"
@@ -159,10 +154,6 @@ const Hero: React.FC<HeroProps> = ({ onStart, onViewSamples }) => {
                       className="w-full h-full object-cover object-top"
                       referrerPolicy="no-referrer"
                     />
-                    {/* After label — top right so it never overlaps Before Selfie */}
-                    <div className="absolute top-3 right-3 bg-amber-600 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">
-                      {pair.style}
-                    </div>
                   </div>
 
                   {/* Divider line */}

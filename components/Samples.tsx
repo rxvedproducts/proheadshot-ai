@@ -75,9 +75,9 @@ const TransformationCard: React.FC<{
           referrerPolicy="no-referrer"
         />
 
-        {/* Before label — top left */}
-        <div className="absolute top-3 left-3 z-10 bg-black/40 backdrop-blur-sm text-white/90 text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
-          Before Selfie
+        {/* Before label — fades out once after image is revealed */}
+        <div className={`absolute top-3 left-3 z-10 bg-black/40 backdrop-blur-sm text-white/90 text-[9px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider transition-opacity duration-700 ${revealed ? 'opacity-0' : 'opacity-100'}`}>
+          Selfie
         </div>
 
         {/* After reveal */}
