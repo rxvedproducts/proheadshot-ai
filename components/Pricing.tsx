@@ -60,8 +60,11 @@ const Pricing: React.FC<PricingProps> = ({ onSelectPlan, onContactEnterpriseSale
         {/* Team Plan — primary */}
         <div className="bg-white border-2 border-amber-400 rounded-2xl p-8 flex flex-col relative overflow-hidden shadow-md shadow-amber-50">
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-amber-500 to-orange-500" />
-          <div className="absolute top-4 right-4 bg-amber-600 text-white text-xs font-bold px-3 py-1 rounded-full">
-            BEST VALUE
+
+          <div className="flex justify-center mb-5 mt-1">
+            <span className="bg-amber-600 text-white text-xs font-bold px-4 py-1.5 rounded-full tracking-wide">
+              BEST VALUE
+            </span>
           </div>
 
           <div className="flex justify-between items-start mb-6">
