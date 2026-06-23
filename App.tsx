@@ -16,6 +16,7 @@ import TermsOfService from './components/TermsOfService';
 import PrivacyPolicy from './components/PrivacyPolicy';
 import CookieBanner from './components/CookieBanner';
 import EnterpriseSalesModal from './components/EnterpriseSalesModal';
+import IndianShowcase from './components/IndianShowcase';
 import RedirectHandler from './components/RedirectHandler';
 import { AppStep, HeadshotStyle, User } from './types';
 import { supabase, ensureUserProfileExists, getUserProfile, testSupabaseConnection } from './services/supabaseService';
@@ -609,6 +610,7 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
+            <IndianShowcase onStart={handleStart} />
             <Pricing onSelectPlan={handleSelectPricingPlan} onContactEnterpriseSales={() => setIsEnterpriseSalesModalOpen(true)} />
             {/* Final CTA before footer */}
             <div className="py-16 px-4 bg-amber-50 border-t border-amber-100">
