@@ -6,64 +6,128 @@ interface HeroProps {
   onViewSamples: () => void;
 }
 
-const PAIRS = [
-  {
-    before: '/headshots/before-1.jpg',
-    after: '/headshots/after-1.png',
-    style: 'Startup Founder',
-  },
-  {
-    before: '/headshots/before-2.jpg',
-    after: '/headshots/after-2.png',
-    style: 'Outdoor Natural',
-  },
-  {
-    before: '/headshots/before-3.jpg',
-    after: '/headshots/after-3.png',
-    style: 'Corporate Studio',
-  },
+interface Pair {
+  before: string;
+  after: string;
+  style: string;
+}
+
+const INDIAN_STYLE_PAIRS: Pair[] = [
+  { before: '/headshots/before-10.png', after: '/headshots/after-10.png', style: 'Outdoor Natural' },
+  { before: '/headshots/before-11.png', after: '/headshots/after-11.png', style: 'Corporate Studio' },
+  { before: '/headshots/before-12.png', after: '/headshots/after-12.png', style: 'Creative Professional' },
+  { before: '/headshots/before-13.png', after: '/headshots/after-13.png', style: 'Modern Workspace' },
 ];
 
-const Hero: React.FC<HeroProps> = ({ onStart, onViewSamples }) => {
+const INDIAN_COSTUME_PAIRS: Pair[] = [
+  { before: '/headshots/before-10.png', after: '/indian-costume/after-10.png', style: 'Gujarati' },
+  { before: '/headshots/before-11.png', after: '/indian-costume/after-11.png', style: 'Royal Maharaja' },
+  { before: '/headshots/before-12.png', after: '/indian-costume/after-12.png', style: 'Maharashtrian' },
+  { before: '/headshots/before-13.png', after: '/indian-costume/after-13.png', style: 'Telangana' },
+];
+
+interface MiniCarouselProps {
+  pairs: Pair[];
+  label: string;
+  accentClass: string;
+  cycleOffset?: number;
+}
+
+const MiniCarousel: React.FC<MiniCarouselProps> = ({ pairs, label, accentClass, cycleOffset = 0 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [revealed, setRevealed] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   useEffect(() => {
-    // Reveal after → after 1.2s
-    const revealTimer = setTimeout(() => setRevealed(true), 1200);
+    // Offset the initial reveal slightly so the two carousels don't animate in sync
+    const revealTimer = setTimeout(() => setRevealed(true), 1000 + cycleOffset);
 
-    // Cycle to next pair after 4s
     const cycleTimer = setTimeout(() => {
       setIsTransitioning(true);
       setTimeout(() => {
         setRevealed(false);
-        setActiveIndex(prev => (prev + 1) % PAIRS.length);
+        setActiveIndex(prev => (prev + 1) % pairs.length);
         setIsTransitioning(false);
-        // Re-reveal after a short pause
-        setTimeout(() => setRevealed(true), 800);
-      }, 400);
-    }, 4500);
+        setTimeout(() => setRevealed(true), 700);
+      }, 350);
+    }, 4000 + cycleOffset);
 
     return () => {
       clearTimeout(revealTimer);
       clearTimeout(cycleTimer);
     };
-  }, [activeIndex]);
+  }, [activeIndex, pairs.length, cycleOffset]);
 
-  const goTo = (idx: number) => {
-    if (idx === activeIndex) return;
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setRevealed(false);
-      setActiveIndex(idx);
-      setIsTransitioning(false);
-      setTimeout(() => setRevealed(true), 800);
-    }, 300);
-  };
+  const pair = pairs[activeIndex];
 
-  const pair = PAIRS[activeIndex];
+  return (
+    <div className="flex flex-col gap-2">
+      {/* Section label */}
+      <p className={`text-[10px] font-bold uppercase tracking-widest ${accentClass}`}>{label}</p>
 
+      {/* Card */}
+      <div
+        className={`relative bg-white border border-stone-200 rounded-2xl p-2 shadow-xl transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+      >
+        {/* Comparison window */}
+        <div className="relative rounded-xl overflow-hidden aspect-[3/4]">
+          {/* Before — grayscale base */}
+          <img
+            src={pair.before}
+            alt="Before"
+            className="absolute inset-0 w-full h-full object-cover grayscale opacity-70"
+            referrerPolicy="no-referrer"
+          />
+
+          {/* After — clip-path reveal */}
+          <div
+            className="absolute inset-0 transition-all ease-in-out duration-[900ms]"
+            style={{ clipPath: revealed ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)' }}
+          >
+            <img
+              src={pair.after}
+              alt={pair.style}
+              className="w-full h-full object-cover object-top"
+              referrerPolicy="no-referrer"
+            />
+            {/* Style pill — top right, appears with the after image */}
+            <div className={`absolute top-2 right-2 text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${accentClass.includes('orange') ? 'bg-orange-600' : 'bg-amber-600'}`}>
+              {pair.style}
+            </div>
+          </div>
+
+          {/* Moving divider */}
+          <div
+            className="absolute top-0 bottom-0 w-px bg-white/80 shadow-[0_0_6px_rgba(255,255,255,0.8)] z-20 pointer-events-none transition-all ease-in-out duration-[900ms]"
+            style={{ left: revealed ? '100%' : '0%' }}
+          />
+        </div>
+
+        {/* Dot pagination */}
+        <div className="flex items-center justify-center gap-1.5 mt-2">
+          {pairs.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                if (i === activeIndex) return;
+                setIsTransitioning(true);
+                setTimeout(() => {
+                  setRevealed(false);
+                  setActiveIndex(i);
+                  setIsTransitioning(false);
+                  setTimeout(() => setRevealed(true), 700);
+                }, 300);
+              }}
+              className={`rounded-full transition-all duration-300 ${i === activeIndex ? 'w-4 h-1.5 bg-amber-600' : 'w-1.5 h-1.5 bg-stone-300 hover:bg-stone-400'}`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Hero: React.FC<HeroProps> = ({ onStart, onViewSamples }) => {
   return (
     <div className="relative overflow-hidden bg-stone-50 py-16 md:py-24 border-b border-stone-200">
       {/* Warm ambient blobs */}
@@ -71,10 +135,10 @@ const Hero: React.FC<HeroProps> = ({ onStart, onViewSamples }) => {
       <div className="absolute bottom-[5%] -right-[10%] h-[500px] w-[500px] rounded-full bg-orange-100/30 blur-[120px] pointer-events-none" />
 
       <div className="container mx-auto px-4 md:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-10 lg:gap-8 items-center">
 
-          {/* Left — copy */}
-          <div className="flex flex-col gap-6">
+          {/* Left — copy, spans 2 of 4 columns */}
+          <div className="lg:col-span-2 flex flex-col gap-6">
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-stone-900 leading-tight">
               AI Headshots That<br />
               <span className="text-amber-600">Mean Business</span>
@@ -123,67 +187,24 @@ const Hero: React.FC<HeroProps> = ({ onStart, onViewSamples }) => {
             </p>
           </div>
 
-          {/* Right — animated before/after */}
-          <div className="relative flex items-center justify-center">
-            <div className="relative w-full max-w-sm">
-              {/* Glow */}
-              <div className="absolute inset-0 bg-amber-100/60 blur-3xl rounded-3xl" />
+          {/* Right — Indian Style carousel (1 of 4 cols) */}
+          <div className="lg:col-span-1">
+            <MiniCarousel
+              pairs={INDIAN_STYLE_PAIRS}
+              label="Indian Style"
+              accentClass="text-amber-700"
+              cycleOffset={0}
+            />
+          </div>
 
-              {/* Card */}
-              <div
-                className={`relative bg-white border border-stone-200 rounded-3xl p-3 shadow-2xl shadow-stone-200/80 transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
-              >
-                {/* Comparison window */}
-                <div className="relative rounded-2xl overflow-hidden aspect-[3/4]">
-                  {/* Before — always visible underneath */}
-                  <img
-                    src={pair.before}
-                    alt="Before selfie"
-                    className="absolute inset-0 w-full h-full object-cover grayscale opacity-70"
-                    referrerPolicy="no-referrer"
-                  />
-
-                  {/* After — animates in via clip-path */}
-                  <div
-                    className="absolute inset-0 transition-all ease-in-out duration-[900ms]"
-                    style={{ clipPath: revealed ? 'inset(0 0% 0 0)' : 'inset(0 100% 0 0)' }}
-                  >
-                    <img
-                      src={pair.after}
-                      alt="After — professional headshot"
-                      className="w-full h-full object-cover object-top"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-
-                  {/* Divider line */}
-                  <div
-                    className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_8px_rgba(255,255,255,0.8)] z-20 transition-all ease-in-out duration-[900ms] pointer-events-none"
-                    style={{ left: revealed ? '100%' : '0%' }}
-                  />
-
-                  {/* Bottom gradient + style badge */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 flex items-end justify-between">
-                    <span
-                      className={`text-white text-xs font-semibold tracking-wide transition-opacity duration-500 ${revealed ? 'opacity-100' : 'opacity-0'}`}
-                    >
-                      {pair.style}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Dot pagination */}
-                <div className="flex items-center justify-center gap-2 mt-3 pb-1">
-                  {PAIRS.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={() => goTo(i)}
-                      className={`rounded-full transition-all duration-300 ${i === activeIndex ? 'w-6 h-2 bg-amber-600' : 'w-2 h-2 bg-stone-300 hover:bg-stone-400'}`}
-                    />
-                  ))}
-                </div>
-              </div>
-            </div>
+          {/* Far right — Indian Costume carousel (1 of 4 cols) */}
+          <div className="lg:col-span-1">
+            <MiniCarousel
+              pairs={INDIAN_COSTUME_PAIRS}
+              label="Indian Costume"
+              accentClass="text-orange-700"
+              cycleOffset={600}
+            />
           </div>
 
         </div>
