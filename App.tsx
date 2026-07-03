@@ -611,7 +611,7 @@ const App: React.FC = () => {
               </div>
             </div>
             <IndianShowcase onStart={handleStart} />
-            <Pricing onSelectPlan={handleSelectPricingPlan} onContactEnterpriseSales={() => setIsEnterpriseSalesModalOpen(true)} />
+            <Pricing onSelectPlan={handleSelectPricingPlan} />
             {/* Final CTA before footer */}
             <div className="py-16 px-4 bg-amber-50 border-t border-amber-100">
               <div className="container mx-auto max-w-3xl text-center">
@@ -631,7 +631,7 @@ const App: React.FC = () => {
         )}
 
         {step === 'how-it-works' && <HowItWorks onStart={handleStart} />}
-        {step === 'pricing' && <Pricing onSelectPlan={handleSelectPricingPlan} onContactEnterpriseSales={() => setIsEnterpriseSalesModalOpen(true)} />}
+        {step === 'pricing' && <Pricing onSelectPlan={handleSelectPricingPlan} />}
         {step === 'refund-policy' && <RefundPolicy onBack={() => handleNavigate(user ? 'dashboard' : 'landing')} />}
         {step === 'terms' && <TermsOfService onBack={() => handleNavigate(user ? 'dashboard' : 'landing')} />}
         {step === 'privacy' && <PrivacyPolicy onBack={() => handleNavigate(user ? 'dashboard' : 'landing')} />}

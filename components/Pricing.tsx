@@ -3,10 +3,9 @@ import { Check, Zap, Users, ShieldCheck } from 'lucide-react';
 
 interface PricingProps {
   onSelectPlan: (planId: string) => void;
-  onContactEnterpriseSales: () => void;
 }
 
-const Pricing: React.FC<PricingProps> = ({ onSelectPlan, onContactEnterpriseSales }) => {
+const Pricing: React.FC<PricingProps> = ({ onSelectPlan }) => {
   return (
     <div className="flex flex-col items-center justify-center py-20 px-4 bg-stone-50 border-t border-stone-200" id="pricing-section">
       <div className="text-center mb-12 max-w-3xl">
@@ -104,17 +103,9 @@ const Pricing: React.FC<PricingProps> = ({ onSelectPlan, onContactEnterpriseSale
         </div>
       </div>
 
-      <div className="mt-8 flex flex-col items-center gap-4 text-center">
-        <div className="flex items-center gap-2 text-stone-500 text-sm">
-          <ShieldCheck className="w-4 h-4 text-green-600" />
-          <span>Satisfaction guaranteed — if you're not happy, contact us within 7 days.</span>
-        </div>
-        <p className="text-stone-400 text-sm">
-          Need more than 50 headshots?{' '}
-          <button onClick={onContactEnterpriseSales} className="text-amber-700 hover:text-amber-800 hover:underline transition-colors font-medium">
-            Contact Enterprise Sales
-          </button>
-        </p>
+      <div className="mt-8 flex items-center justify-center gap-2 text-stone-500 text-sm">
+        <ShieldCheck className="w-4 h-4 text-green-600" />
+        <span>Satisfaction guaranteed — if you're not happy, contact us within 7 days.</span>
       </div>
     </div>
   );
