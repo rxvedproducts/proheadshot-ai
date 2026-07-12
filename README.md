@@ -38,13 +38,12 @@ The application has deep support for **Indian cultural styles** — covering pro
 | Frontend | React 19, TypeScript, Vite 6 |
 | Styling | Tailwind CSS v4 (JIT) |
 | Icons | Lucide React |
-| Analytics | Vercel Analytics |
 | Auth | Supabase Auth (Google OAuth + Magic Link) |
 | Database | Supabase (PostgreSQL) |
 | Backend Logic | Supabase Edge Functions (Deno) |
 | AI Model | Google Gemini 2.5 Flash Image (`gemini-2.5-flash-image`) |
 | Payments | Stripe Checkout (one-time payments) |
-| Hosting | Vercel (auto-deploy on push to `main`) |
+| Hosting | Firebase Hosting (Google Cloud) |
 
 ---
 
@@ -138,7 +137,8 @@ proheadshot-ai/
 ├── types.ts                      # Shared TypeScript interfaces
 ├── vite.config.ts                # Vite + Tailwind plugin config
 ├── tsconfig.json
-├── vercel.json                   # SPA rewrites, security headers, function timeout
+├── firebase.json                 # Firebase Hosting config — SPA rewrites, security headers
+├── .firebaserc                   # Firebase project alias
 ├── setup-production-stripe.sh   # One-time script to migrate test → live Stripe keys
 │
 ├── components/
@@ -350,7 +350,7 @@ The script:
 1. Prompts for all 5 values silently (no echo — nothing appears on screen or in shell history)
 2. Updates Supabase Edge Function secrets
 3. Updates `.env.local` with the live publishable key
-4. Optionally updates the Vercel production environment variable
+4. Rebuilds the app and redeploys it to Firebase Hosting
 5. Redeploys both Edge Functions
 6. Wipes all sensitive values from shell memory with `unset`
 
@@ -358,29 +358,23 @@ The script:
 
 ## Deployment
 
-The app is deployed on **Vercel** with automatic deploys triggered on every push to `main`.
+The app is a static SPA (all backend logic lives in Supabase Edge Functions) deployed to **Firebase Hosting** on Google Cloud project `proheadshotai-rxvedproducts`.
 
-### Vercel Configuration (`vercel.json`)
+### Firebase Configuration (`firebase.json` / `.firebaserc`)
 
-- **SPA rewrite** — all non-API routes serve `index.html` (required for React Router-style navigation)
+- **SPA rewrite** — all routes serve `index.html` (required for client-side routing)
 - **Security headers** — `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`
-- **Function timeout** — 60 seconds for `api/generate-headshot.ts`
-
-### Deploy via Git Push
-
-```bash
-git push origin main   # triggers Vercel auto-deploy
-```
 
 ### Manual Deploy
 
 ```bash
-vercel --prod
+npm run build
+firebase deploy --only hosting
 ```
 
-### Required Vercel Environment Variables
+### Required Build-Time Environment Variables
 
-Set in Vercel Dashboard → Project → Settings → Environment Variables → Production:
+Baked into the client bundle at build time from `.env.local` (see [Environment Variables](#environment-variables)):
 
 ```
 VITE_SUPABASE_URL
@@ -415,7 +409,7 @@ Approximate cost per plan purchase at current Gemini pricing ($0.039/image):
 | Individual ($2.99) | 20 | ~$0.78 | ~$0.39 | ~$2.60 | ~$1.82 (~70%) |
 | Team ($5.99) | 50 | ~$1.95 | ~$0.47 | ~$5.52 | ~$3.57 (~65%) |
 
-Supabase Edge Function invocations and Vercel hosting are within free tier limits at typical usage volumes.
+Supabase Edge Function invocations and Firebase Hosting are within free tier limits at typical usage volumes.
 
 > Verify current Gemini pricing at [ai.google.dev/pricing](https://ai.google.dev/pricing) before scaling.
 

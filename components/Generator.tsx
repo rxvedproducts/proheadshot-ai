@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { HeadshotStyle, User } from '../types';
 import { compressImage } from '../services/geminiService';
-import { uploadImage, saveGeneratedImage, getPublicUrl, supabase } from '../services/supabaseService';
+import { uploadImage, saveGeneratedImage, getSignedUrl, supabase } from '../services/supabaseService';
 import { Loader2, AlertCircle, RefreshCcw, Coins, Sparkles, Wand2 } from 'lucide-react';
 
 interface GeneratorProps {
@@ -111,9 +111,9 @@ const Generator: React.FC<GeneratorProps> = ({ uploadedImage, selectedStyle, onC
 
               await saveGeneratedImage(user.id, originalPath, generatedPath, selectedStyle.id);
               // Credit deduction is handled server-side in the Edge Function before generation
-              const publicUrl = getPublicUrl(generatedPath);
+              const signedUrl = await getSignedUrl(generatedPath);
               setProgress(100);
-              setTimeout(() => onComplete(publicUrl), 500);
+              setTimeout(() => onComplete(signedUrl), 500);
             } catch (storageError) {
               console.warn("Storage/DB failed, showing result directly:", storageError);
               setProgress(100);

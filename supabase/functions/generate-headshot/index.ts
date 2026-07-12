@@ -15,6 +15,15 @@ Deno.serve(async (req: Request) => {
     return new Response('ok', { headers: corsHeaders })
   }
 
+  // Tracked so the catch block can refund the credit if generation fails
+  // after it was already deducted.
+  const adminClient = createClient(
+    Deno.env.get('SUPABASE_URL') ?? '',
+    Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+  );
+  let userId: string | null = null;
+  let creditDeducted = false;
+
   try {
     // 1. Verify Authentication
     const authHeader = req.headers.get('Authorization');
@@ -38,17 +47,32 @@ Deno.serve(async (req: Request) => {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         });
     }
+    userId = user.id;
 
-    // 2. Atomic server-side credit check and deduction (before generation)
-    const adminClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
-    );
+    // 2. Parse & validate input before touching credits
+    const { image, style, isCostume } = await req.json();
+    if (!image || !style) {
+        return new Response(JSON.stringify({ error: 'Missing image or style' }), {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
 
+    // 3. Confirm server is configured before touching credits
+    const apiKey = Deno.env.get('API_KEY');
+    if (!apiKey) {
+         console.error("Critical Error: API_KEY secret is not set in Supabase Edge Functions.");
+         return new Response(JSON.stringify({ error: 'Server configuration error: Service Unavailable.' }), {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+    }
+
+    // 4. Atomic server-side credit check and deduction (only now, right before generation)
     const { data: profile, error: profileError } = await adminClient
       .from('profiles')
       .select('credits')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single();
 
     if (profileError || !profile || profile.credits < 1) {
@@ -62,7 +86,7 @@ Deno.serve(async (req: Request) => {
     const { data: updated } = await adminClient
       .from('profiles')
       .update({ credits: profile.credits - 1 })
-      .eq('id', user.id)
+      .eq('id', userId)
       .eq('credits', profile.credits)
       .select('id');
 
@@ -72,26 +96,7 @@ Deno.serve(async (req: Request) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
-
-    // 3. Parse Input
-    const { image, style, isCostume } = await req.json();
-    if (!image || !style) {
-        return new Response(JSON.stringify({ error: 'Missing image or style' }), {
-            status: 400,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-    }
-
-    // 3. Initialize Gemini
-    const apiKey = Deno.env.get('API_KEY');
-    
-    if (!apiKey) {
-         console.error("Critical Error: API_KEY secret is not set in Supabase Edge Functions.");
-         return new Response(JSON.stringify({ error: 'Server configuration error: Service Unavailable.' }), {
-            status: 500,
-            headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-        });
-    }
+    creditDeducted = true;
 
     const ai = new GoogleGenAI({ apiKey });
 
@@ -100,16 +105,16 @@ Deno.serve(async (req: Request) => {
 
     // SELECT PROMPT STRATEGY
     let prompt = "";
-    
+
     if (isCostume) {
       // ADVANCED GENDER-AWARE WORKFLOW FOR COSTUMES
       prompt = `
-        WORKFLOW: 
-        1. Analyze the input image to detect the person's gender (male or female). 
+        WORKFLOW:
+        1. Analyze the input image to detect the person's gender (male or female).
         2. Based on the detected gender, apply an authentic Indian costume in the chosen style: ${style}.
         3. Ensure cultural accuracy and natural fit for the detected gender.
         4. Preserve the person's facial features, pose, and proportions perfectly while editing.
-        5. The costume should match traditional or regional details appropriate for the gender. 
+        5. The costume should match traditional or regional details appropriate for the gender.
         6. Ensure the final image looks realistic, cohesive, and visually accurate, with no distortions or mismatches.
         7. Maintain EXACT IDENTITY: Facial structure, eyes, nose, and mouth must remain perfectly recognizable.
       `;
@@ -117,9 +122,9 @@ Deno.serve(async (req: Request) => {
       // STANDARD BUSINESS/ARTISTIC WORKFLOW
       prompt = `
         Task: Transform the subject in the provided photo based on these specific style instructions.
-        
+
         Style Instructions: ${style}
-        
+
         MANDATORY CONSTRAINTS:
         1. EXACT IDENTITY: Maintain the subject's facial structure, eyes, nose, and mouth perfectly. Do not change the person's identity or gender.
         2. PHOTOREALISM: Ensure the result looks like a real, high-resolution photograph (unless style is explicitly artistic).
@@ -173,11 +178,11 @@ Deno.serve(async (req: Request) => {
 
     if (!generatedImage) {
         console.warn("Generation failed. Reason:", candidate.finishReason, "Text:", textOutput);
-        
+
         if (candidate.finishReason === 'SAFETY') {
              throw new Error("This style or photo triggered our safety filters. Please try a different photo or style.");
         }
-        
+
         if (textOutput && textOutput.length > 5) {
              throw new Error("The AI model was unable to process this request. Please ensure the photo is a clear portrait of one person.");
         }
@@ -191,6 +196,28 @@ Deno.serve(async (req: Request) => {
 
   } catch (error: any) {
     console.error("Generate Headshot Error:", error);
+
+    // Refund the credit if it was deducted but generation didn't actually succeed
+    if (creditDeducted && userId) {
+      try {
+        const { data: currentProfile } = await adminClient
+          .from('profiles')
+          .select('credits')
+          .eq('id', userId)
+          .single();
+
+        if (currentProfile) {
+          await adminClient
+            .from('profiles')
+            .update({ credits: currentProfile.credits + 1 })
+            .eq('id', userId);
+          console.log(`Refunded 1 credit to user ${userId} after generation failure.`);
+        }
+      } catch (refundError) {
+        console.error("Failed to refund credit after generation failure:", refundError);
+      }
+    }
+
     return new Response(JSON.stringify({ error: error.message || 'Internal Server Error' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }

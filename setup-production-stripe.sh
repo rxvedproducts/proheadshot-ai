@@ -5,7 +5,7 @@
 # Run this once from the project root:   bash setup-production-stripe.sh
 #
 # • Values are entered silently (no echo to screen or shell history)
-# • Updates: Supabase secrets, .env.local, Vercel production env var
+# • Updates: Supabase secrets, .env.local, then rebuilds + redeploys Firebase Hosting
 # • Redeploys both Supabase edge functions so they pick up new secrets
 # ---------------------------------------------------------------------------
 set -euo pipefail
@@ -44,19 +44,14 @@ perl -i -pe "s|^VITE_STRIPE_PUBLISHABLE_KEY=.*|VITE_STRIPE_PUBLISHABLE_KEY=$PK|"
 echo "✓ .env.local updated."
 echo ""
 
-# ── 3. Vercel production environment variable ────────────────────────────
-echo "→ Setting Vercel VITE_STRIPE_PUBLISHABLE_KEY (production)..."
-if command -v vercel &>/dev/null; then
-  # Remove old value if it exists, then add the live one
-  vercel env rm VITE_STRIPE_PUBLISHABLE_KEY production --yes 2>/dev/null || true
-  printf '%s\n' "$PK" | vercel env add VITE_STRIPE_PUBLISHABLE_KEY production
-  echo "✓ Vercel env var set. Trigger a redeploy (push to main) to apply it."
+# ── 3. Rebuild and redeploy Firebase Hosting ─────────────────────────────
+echo "→ Rebuilding with live publishable key and redeploying to Firebase Hosting..."
+if command -v firebase &>/dev/null; then
+  (cd "$PROJECT_ROOT" && npm run build && firebase deploy --only hosting)
+  echo "✓ Firebase Hosting redeployed with the live key baked in."
 else
-  echo "⚠  Vercel CLI not found. Set this manually in Vercel Dashboard:"
-  echo "   Project → Settings → Environment Variables"
-  echo "   Name:  VITE_STRIPE_PUBLISHABLE_KEY"
-  echo "   Value: (your pk_live_... key)"
-  echo "   Env:   Production"
+  echo "⚠  Firebase CLI not found. Run this manually:"
+  echo "   npm run build && firebase deploy --only hosting"
 fi
 echo ""
 
@@ -72,8 +67,7 @@ unset PK SK WHK IND TEAM
 
 echo "╔══════════════════════════════════════════════════════╗"
 echo "║   ✓  All done! Next steps:                           ║"
-echo "║   1. git push origin main  (triggers Vercel deploy)  ║"
-echo "║   2. Do a real $2.99 purchase to verify end-to-end   ║"
-echo "║   3. Check Stripe Dashboard → Webhooks → delivery    ║"
+echo "║   1. Do a real $2.99 purchase to verify end-to-end   ║"
+echo "║   2. Check Stripe Dashboard → Webhooks → delivery    ║"
 echo "╚══════════════════════════════════════════════════════╝"
 echo ""

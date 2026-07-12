@@ -185,9 +185,12 @@ export const uploadImage = async (userId: string, dataUrl: string, folder: 'orig
   }
 };
 
-export const getPublicUrl = (path: string) => {
-  const { data } = supabase.storage.from('images').getPublicUrl(path);
-  return data.publicUrl;
+// Bucket is private — only the owner's JWT can mint a signed URL for their own path
+// (enforced by the storage.objects RLS policy). Defaults to a 1 hour expiry.
+export const getSignedUrl = async (path: string, expiresInSeconds = 3600) => {
+  const { data, error } = await supabase.storage.from('images').createSignedUrl(path, expiresInSeconds);
+  if (error) throw error;
+  return data.signedUrl;
 };
 
 export const saveGeneratedImage = async (
@@ -236,11 +239,11 @@ export const fetchUserHistory = async (userId: string) => {
 
   if (error) throw error;
 
-  // Map paths to full URLs
-  return (data || []).map(img => ({
+  // Map paths to signed URLs (bucket is private; each URL is scoped to this user and expires)
+  return Promise.all((data || []).map(async img => ({
     ...img,
-    publicUrl: getPublicUrl(img.generated_image_path)
-  }));
+    publicUrl: await getSignedUrl(img.generated_image_path)
+  })));
 };
 
 /**

@@ -1,27 +1,24 @@
 -- ProHeadshot AI — Database Schema
 -- Run this in the Supabase SQL Editor (or `supabase db push`) on a fresh project.
--- Reconstructed from application code: services/supabaseService.ts,
+-- Reconstructed from application code: services/supabaseService.ts, api/generate-headshot.ts,
 -- supabase/functions/{create-checkout,stripe-webhook,generate-headshot}/index.ts
 
 -- ============================================================
 -- 1. plans — lookup table for purchasable credit packs
--- id is the plan slug itself (matches Stripe checkout metadata.plan_id and
--- stripe-webhook's direct-ID lookup).
 -- ============================================================
 create table if not exists plans (
-  id text primary key,
+  id uuid primary key default gen_random_uuid(),
   name text not null,
-  stripe_price_id text,
+  slug text unique not null,
   credits integer not null,
-  price integer not null,
-  active boolean not null default true
+  created_at timestamptz not null default now()
 );
 
-insert into plans (id, name, stripe_price_id, credits, price, active)
+insert into plans (name, slug, credits)
 values
-  ('individual', 'Individual Plan', 'price_1Tow4uB0NtsPmosRZdKc0ZJV', 20, 299, true),
-  ('team', 'Team Plan', 'price_1Tow65B0NtsPmosRU9EPCInn', 50, 599, true)
-on conflict (id) do nothing;
+  ('Individual', 'individual', 20),
+  ('Team', 'team', 50)
+on conflict (slug) do nothing;
 
 -- ============================================================
 -- 2. profiles — one row per auth user; credit wallet
@@ -79,7 +76,7 @@ create trigger on_auth_user_created
 create table if not exists purchases (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
-  plan_id text references plans(id),
+  plan_id uuid references plans(id),
   stripe_session_id text unique,
   amount_paid integer,
   credits_added integer,
