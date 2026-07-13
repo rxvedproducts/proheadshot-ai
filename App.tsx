@@ -20,6 +20,7 @@ import IndianShowcase from './components/IndianShowcase';
 import RedirectHandler from './components/RedirectHandler';
 import { AppStep, HeadshotStyle, User } from './types';
 import { supabase, ensureUserProfileExists, getUserProfile, testSupabaseConnection } from './services/supabaseService';
+import { trackEvent, trackScreenView, initAnalyticsIfConsented } from './services/analyticsService';
 import { SUPPORT_EMAIL } from './constants';
 import { Loader2, CheckCircle2, AlertTriangle, Terminal, X, Copy, Check, Wrench, Sparkles, ArrowRight } from 'lucide-react';
 
@@ -134,7 +135,8 @@ const App: React.FC = () => {
   // Global console and error interceptors feeding a safe global log array to prevent infinite rendering loops
   useEffect(() => {
     _systemLogs.push(`[System] Application loading... URL: ${window.location.origin}`);
-    
+    initAnalyticsIfConsented();
+
     const handleGlobalError = (event: ErrorEvent) => {
       const msg = `[Error] ${event.message || event.error?.message || 'Uncaught Script Error'}`;
       _systemLogs.push(msg);
@@ -233,6 +235,11 @@ const App: React.FC = () => {
     userRef.current = user;
   }, [user]);
 
+  // Log a screen_view for each step — this SPA has no router, so `step` is the closest thing to a page/route
+  useEffect(() => {
+    trackScreenView(step);
+  }, [step]);
+
 
   const fetchAndSetUser = async (sessionUser: any) => {
       if (!sessionUser) return;
@@ -315,10 +322,16 @@ const App: React.FC = () => {
               setIsAuthModalOpen(false);
               setIsRedirectProcessing(false);
 
+              // Only the actual sign-in transition, not session restores/token refreshes on reload
+              if (event === 'SIGNED_IN') {
+                  trackEvent('login', { method: session.user.app_metadata?.provider || 'unknown' });
+              }
+
               // Handle post-purchase redirect
               const urlParams = new URLSearchParams(window.location.search);
               if (urlParams.get('purchase') === 'success') {
                   setShowPaymentSuccess(true);
+                  trackEvent('purchase', { currency: 'USD' });
                   try {
                       window.history.replaceState(null, '', window.location.pathname);
                   } catch (historyErr) {

@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { HeadshotStyle, User } from '../types';
 import { compressImage } from '../services/geminiService';
 import { uploadImage, saveGeneratedImage, getSignedUrl, supabase } from '../services/supabaseService';
+import { trackEvent } from '../services/analyticsService';
 import { Loader2, AlertCircle, RefreshCcw, Coins, Sparkles, Wand2 } from 'lucide-react';
 
 interface GeneratorProps {
@@ -93,6 +94,7 @@ const Generator: React.FC<GeneratorProps> = ({ uploadedImage, selectedStyle, onC
         }
         const { image: generatedBase64 } = await apiRes.json();
         setStage("Finalizing your headshot...");
+        trackEvent('generate_headshot', { style_id: selectedStyle.id, style_name: selectedStyle.name, is_costume: !!selectedStyle.isCostume });
 
         clearInterval(progressInterval);
         setProgress(90);

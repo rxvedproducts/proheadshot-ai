@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Cookie } from 'lucide-react';
+import { initAnalytics } from '../services/analyticsService';
 
 const CookieBanner: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -22,6 +23,9 @@ const CookieBanner: React.FC = () => {
       localStorage.setItem('cookie-consent', choice);
     } catch (e) {
       console.warn("localStorage not available:", e);
+    }
+    if (choice === 'accepted') {
+      initAnalytics();
     }
     setIsVisible(false);
   };
