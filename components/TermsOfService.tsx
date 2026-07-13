@@ -33,7 +33,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ onBack }) => {
               <ShieldCheck className="w-5 h-5 text-amber-600 flex-shrink-0" /> 1. Service Description
             </h3>
             <p className="text-stone-600 leading-relaxed">
-              ProHeadshot AI uses Artificial Intelligence to transform user-uploaded photos into professional headshots. By using our service, you acknowledge that AI generation is experimental and results may vary.
+              PhotoVed uses Artificial Intelligence to transform user-uploaded photos into professional headshots. By using our service, you acknowledge that AI generation is experimental and results may vary.
             </p>
           </section>
 
@@ -84,7 +84,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ onBack }) => {
           <section className="bg-white border border-stone-200 rounded-2xl p-8">
             <h3 className="text-lg font-bold text-stone-900 mb-3">5. Limitation of Liability</h3>
             <p className="text-stone-600 leading-relaxed">
-              ProHeadshot AI is provided "as-is" without warranty. We are not liable for any damages arising from the use of our service, including but not limited to loss of data or business interruption.
+              PhotoVed is provided "as-is" without warranty. We are not liable for any damages arising from the use of our service, including but not limited to loss of data or business interruption.
             </p>
           </section>
 

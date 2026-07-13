@@ -7,6 +7,10 @@ export interface HeadshotStyle {
   previewColor: string;
   thumbnail?: string;
   isCostume?: boolean;
+  // Set only for styles that are gender-specific by concept (e.g. bridal wear).
+  // Most costume styles are left unset since the AI adapts attire to the
+  // detected gender automatically — see generate-headshot Edge Function.
+  recommendedFor?: 'male' | 'female';
 }
 
 export interface GeneratedImage {

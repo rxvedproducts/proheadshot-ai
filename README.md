@@ -1,4 +1,4 @@
-# ProHeadshot AI
+# PhotoVed
 
 A full-stack SaaS web application that transforms any selfie into a studio-quality professional headshot in under 60 seconds, powered by Google Gemini AI. Users pay once, get their headshots instantly — no subscription, no appointment.
 
@@ -25,7 +25,7 @@ A full-stack SaaS web application that transforms any selfie into a studio-quali
 
 ## Overview
 
-ProHeadshot AI is a single-page React application backed by Supabase Edge Functions. Users upload a selfie, select a professional style, pay a one-time fee via Stripe, and receive AI-generated headshots delivered directly to their dashboard.
+PhotoVed is a single-page React application backed by Supabase Edge Functions. Users upload a selfie, select a professional style, pay a one-time fee via Stripe, and receive AI-generated headshots delivered directly to their dashboard.
 
 The application has deep support for **Indian cultural styles** — covering professional headshots, traditional art styles, regional costumes from all major states, and festive/cinematic looks.
 

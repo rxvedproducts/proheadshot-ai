@@ -145,9 +145,9 @@ max_indexes = 5
 enabled = true
 # The base URL of your website. Used as an allow-list for redirects and for constructing URLs used
 # in emails.
-site_url = "https://proheadshotai-rxvedproducts.web.app"
+site_url = "https://photoved.com"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
-additional_redirect_urls = ["https://proheadshotai-rxvedproducts.web.app", "http://127.0.0.1:3000", "http://localhost:3000"]
+additional_redirect_urls = ["https://photoved.com", "https://www.photoved.com", "https://proheadshotai-rxvedproducts.web.app", "http://127.0.0.1:3000", "http://localhost:3000"]
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to the local API URL (http://127.0.0.1:<port>/auth/v1).
@@ -312,8 +312,9 @@ skip_nonce_check = false
 email_optional = false
 
 [auth.external.google]
-enabled = false
-client_id = ""
+enabled = true
+client_id = "1043572968710-n0hs21b7o8nj4f8vas4r41lenlqm4h84.apps.googleusercontent.com"
+# Real secret lives only in Supabase's Auth config (set via dashboard), not here.
 # DO NOT commit your OAuth provider secret to git. Use environment variable substitution instead:
 secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
 redirect_uri = ""

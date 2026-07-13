@@ -1,5 +1,5 @@
 {
-  "name": "ProHeadshot AI",
+  "name": "PhotoVed",
   "description": "Professional AI Headshot Generator",
   "requestFramePermissions": [
     "camera"

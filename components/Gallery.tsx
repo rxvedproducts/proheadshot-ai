@@ -11,7 +11,7 @@ const Gallery: React.FC<GalleryProps> = ({ imageUrl, onRestart }) => {
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = imageUrl;
-    link.download = `proheadshot-${Date.now()}.png`;
+    link.download = `photoved-${Date.now()}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

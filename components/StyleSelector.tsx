@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { HEADSHOT_STYLES, CREATIVE_CATEGORIES, INDIAN_CULTURE_CATEGORIES, INDIAN_COSTUME_CATEGORIES } from '../constants';
 import { HeadshotStyle } from '../types';
-import { Check, Briefcase, Palette, Sparkles, LayoutGrid, Globe, Shirt } from 'lucide-react';
+import { Check, Briefcase, Palette, Sparkles, LayoutGrid, Globe, Shirt, Info } from 'lucide-react';
 
 interface StyleSelectorProps {
   onSelect: (style: HeadshotStyle) => void;
@@ -39,6 +39,14 @@ const StyleSelector: React.FC<StyleSelectorProps> = ({ onSelect, selectedStyle }
             <div className={`w-full h-full ${style.previewColor} opacity-80 group-hover:opacity-100 transition-opacity`} />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-stone-900/60 via-transparent to-transparent opacity-60" />
+
+          {style.recommendedFor && (
+            <div className={`absolute top-3 left-3 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide shadow-sm ${
+              style.recommendedFor === 'female' ? 'bg-pink-100 text-pink-700' : 'bg-sky-100 text-sky-700'
+            }`}>
+              {style.recommendedFor === 'female' ? 'Female' : 'Male'}
+            </div>
+          )}
 
           {isSelected && (
             <div className="absolute top-3 right-3 bg-amber-600 rounded-full p-1 shadow-lg animate-in zoom-in duration-300">
@@ -164,6 +172,13 @@ const StyleSelector: React.FC<StyleSelectorProps> = ({ onSelect, selectedStyle }
 
       {mode === 'costume' && (
         <div className="space-y-16 w-full animate-in fade-in duration-500">
+          <div className="flex items-start gap-3 px-5 py-4 bg-amber-50 border border-amber-200 rounded-2xl text-sm text-amber-900 max-w-3xl mx-auto">
+            <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+            <p>
+              Our AI automatically adapts each regional costume to match your gender in the photo, so you don't need to worry about picking the "right" one.
+              Styles tagged <span className="font-bold">Female</span> or <span className="font-bold">Male</span> (like Bridal or Royal Maharaja) are designed for that gender specifically.
+            </p>
+          </div>
           {INDIAN_COSTUME_CATEGORIES.map((category) => (
             <div key={category.name} className="space-y-6">
               <div className="flex items-center gap-3">

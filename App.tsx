@@ -685,7 +685,7 @@ const App: React.FC = () => {
                 <div className="rounded-lg bg-amber-600 p-2">
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-white">ProHeadshot<span className="text-amber-500">AI</span></span>
+                <span className="text-xl font-bold text-white">Photo<span className="text-amber-500">Ved</span></span>
               </div>
               <p className="text-stone-400 max-w-sm leading-relaxed text-sm">
                 Transforming professional identity with the power of generative AI. Our mission is to make premium business photography accessible to everyone.
@@ -709,7 +709,7 @@ const App: React.FC = () => {
             </div>
           </div>
           <div className="pt-8 border-t border-stone-800 flex flex-col md:flex-row items-center justify-between gap-4 text-stone-500 text-xs">
-            <p>&copy; {new Date().getFullYear()} ProHeadshot AI. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} PhotoVed. All rights reserved.</p>
             <p>Made with ❤️ in California</p>
           </div>
         </div>
@@ -793,7 +793,7 @@ const App: React.FC = () => {
               <button
                 onClick={() => {
                   try {
-                    const statusText = `=== PROHEADSHOT AI DIAGNOSTICS ===\nTime: ${new Date().toISOString()}\nDatabase Access: ${dbStatus.success}\nUser: ${user ? user.email : 'None'}\n\n=== LOGS ===\n${debugLogs.join('\n')}`;
+                    const statusText = `=== PHOTOVED DIAGNOSTICS ===\nTime: ${new Date().toISOString()}\nDatabase Access: ${dbStatus.success}\nUser: ${user ? user.email : 'None'}\n\n=== LOGS ===\n${debugLogs.join('\n')}`;
                     navigator.clipboard.writeText(statusText);
                     setWasCopied(true);
                     setTimeout(() => setWasCopied(false), 2000);

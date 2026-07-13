@@ -32,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ onNavigate, user, onLoginClick, onLogou
           <div className="rounded-lg bg-amber-600 p-2">
             <Sparkles className="h-5 w-5 text-white" />
           </div>
-          <span className="text-lg font-bold text-stone-900">ProHeadshot<span className="text-amber-600">AI</span></span>
+          <span className="text-lg font-bold text-stone-900">Photo<span className="text-amber-600">Ved</span></span>
         </button>
 
         {/* Desktop nav */}

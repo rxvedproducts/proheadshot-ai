@@ -39,7 +39,7 @@ const RefundPolicy: React.FC<RefundPolicyProps> = ({ onBack }) => {
                 <h3 className="text-lg font-bold text-stone-900 mb-2">1. Strict No-Refund Policy on Digital Goods</h3>
                 <p className="text-stone-600 leading-relaxed">
                   Due to the immediate and irrevocable nature of our service, all sales are final and non-refundable.
-                  ProHeadshot AI provides a digital transformation service that incurs immediate server and AI computing costs
+                  PhotoVed provides a digital transformation service that incurs immediate server and AI computing costs
                   the moment you initiate the process.
                 </p>
               </div>
